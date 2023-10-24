@@ -1,58 +1,63 @@
 import { useState } from "react";
+
 export default function Register({ dispatchUser }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordRepeat, setPasswordRepeat] = useState("");
-  function handleUsername(evt) {
-    setUsername(evt.target.value);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    passwordRepeat: "",
+  });
+
+  function handleChange(evt) {
+    const { name, value } = evt.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   }
-  function handlePassword(evt) {
-    setPassword(evt.target.value);
-  }
-  function handlePasswordRepeat(evt) {
-    setPasswordRepeat(evt.target.value);
+
+  function handleRegister() {
+    const { username } = formData;
+    dispatchUser({ type: "REGISTER", username });
   }
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        // setUser(username);
-        dispatchUser({type: "REGISTER", username})
-
+        handleRegister();
       }}
     >
       <label htmlFor="register-username">Username:</label>
       <input
         type="text"
-        value={username}
-        onChange={handleUsername}
-        name="register-username"
+        name="username"
         id="register-username"
+        value={formData.username}
+        onChange={handleChange}
       />
       <label htmlFor="register-password">Password:</label>
       <input
         type="password"
-        name="register-password"
+        name="password"
         id="register-password"
-        value={password}
-        onChange={handlePassword}
+        value={formData.password}
+        onChange={handleChange}
       />
       <label htmlFor="register-password-repeat">Repeat password:</label>
       <input
         type="password"
-        name="register-password-repeat"
+        name="passwordRepeat"
         id="register-password-repeat"
-        value={passwordRepeat}
-        onChange={handlePasswordRepeat}
+        value={formData.passwordRepeat}
+        onChange={handleChange}
       />
       <input
         type="submit"
         value="Register"
         disabled={
-          username.length === 0 ||
-          password.length === 0 ||
-          password !== passwordRepeat
+          formData.username.length === 0 ||
+          formData.password.length === 0 ||
+          formData.password !== formData.passwordRepeat
         }
       />
     </form>

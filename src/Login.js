@@ -1,31 +1,45 @@
 import React, { useState } from "react";
 
 export default function Login({ dispatchUser }) {
-  const [username, setUsername] = useState("");
-  function handleUsername(evt) {
-    setUsername(evt.target.value);
+  const [formData, setFormData] = useState({ username: "", password: "" });
+
+  function handleChange(evt) {
+    const { name, value } = evt.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+
+  function handleLogin() {
+    const { username } = formData;
+    dispatchUser({ type: "LOGIN", username });
   }
 
   return (
     <form
       onSubmit={(e) => {
-
         e.preventDefault();
-        // setUser(username);
-        dispatchUser({type: "LOGIN", username})
+        handleLogin();
       }}
     >
       <label htmlFor="login-username">Username:</label>
       <input
         type="text"
-        name="login-username"
+        name="username"
         id="login-username"
-        value={username}
-        onChange={handleUsername}
+        value={formData.username}
+        onChange={handleChange}
       />
       <label htmlFor="login-password">Password:</label>
-      <input type="password" name="login-password" id="login-password" />
-      <input type="submit" value="Login" disabled={username.length === 0}/>
+      <input
+        type="password"
+        name="password"
+        id="login-password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      <input type="submit" value="Login" disabled={formData.username.length === 0} />
     </form>
   );
 }

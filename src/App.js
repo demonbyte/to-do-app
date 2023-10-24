@@ -8,6 +8,7 @@ import ToDoList from "./ToDoList";
 import { v4 as uuidv4 } from "uuid";
 
 function App() {
+  // User Reducer
   function userReducer(state, action) {
     switch (action.type) {
       case "LOGIN":
@@ -20,12 +21,11 @@ function App() {
     }
   }
 
-  const [user, dispatchUser] = useReducer(userReducer, "");
-
-  function postReducer(state, action) {
+  // Todo Reducer
+  function todoReducer(state, action) {
     switch (action.type) {
-      case "CREATE_POST":
-        const newPost = {
+      case "CREATE_TODO":
+        const newTodo = {
           id: uuidv4(),
           title: action.title,
           description: action.description,
@@ -34,8 +34,8 @@ function App() {
           complete: false,
           dateCompleted: null,
         };
-        return [newPost, ...state];
-      case "TOGGLE_COMPLETE":
+        return [newTodo, ...state];
+      case "TOGGLE_TODO":
         return state.map((todo) =>
           todo.id === action.id
             ? {
@@ -45,12 +45,16 @@ function App() {
               }
             : todo
         );
+      case "DELETE_TODO":
+        return state.filter((todo) => todo.id !== action.id);
       default:
         return state;
     }
   }
 
-  const initialPosts = [
+  const [user, dispatchUser] = useReducer(userReducer, "");
+
+  const initialTodos = [
     {
       id: uuidv4(),
       title: "React Hooks",
@@ -78,41 +82,19 @@ function App() {
       complete: false,
       dateCompleted: null,
     },
-    {
-      id: uuidv4(),
-      title: "CSS Styling",
-      description: "Apply styles to React components",
-      author: "Eve",
-      dateCreated: Date.now(),
-      complete: false,
-      dateCompleted: null,
-    },
-    {
-      id: uuidv4(),
-      title: "Redux Integration",
-      description: "Integrate Redux into React application",
-      author: "John Doe",
-      dateCreated: Date.now(),
-      complete: false,
-      dateCompleted: null,
-    },
-
-
-
-    // Add more initial Todo items as needed
+    // Add more initial todos as needed
   ];
+  const [todos, dispatchTodo] = useReducer(todoReducer, initialTodos);
 
-  const [todos, dispatchPost] = useReducer(postReducer, initialPosts);
-
-  const handleAddPost = (newPost) => {
-    dispatchPost({ type: "CREATE_POST", ...newPost });
+  const handleAddTodo = (newTodo) => {
+    dispatchTodo({ type: "CREATE_TODO", ...newTodo });
   };
 
   return (
     <div>
       <UserBar user={user} dispatchUser={dispatchUser} />
-      <CreateToDo user={user} handleAddPost={handleAddPost} />
-      <ToDoList todos={todos} dispatchPost={dispatchPost} />
+      {user && <CreateToDo user={user} handleAddTodo={handleAddTodo} />}
+      <ToDoList todos={todos} dispatchTodo={dispatchTodo} />
     </div>
   );
 }

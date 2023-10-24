@@ -1,3 +1,4 @@
+// ToDo.js
 import React from "react";
 
 export default function ToDo({
@@ -9,6 +10,7 @@ export default function ToDo({
   complete,
   dateCompleted,
   handleToggleComplete,
+  handleDeleteTodo,
 }) {
   return (
     <div>
@@ -29,6 +31,7 @@ export default function ToDo({
           Date Completed: {new Date(dateCompleted).toLocaleString()}
         </div>
       )}
+      <button onClick={handleDeleteTodo}>Delete</button>
       <br />
     </div>
   );
