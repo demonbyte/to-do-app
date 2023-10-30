@@ -1,16 +1,16 @@
 // ToDoList.js
 import ToDo from "./ToDo";
 
-export default function ToDoList({ todos = [], dispatchTodo }) {
+export default function ToDoList({ todos = [], dispatch }) {
   const handleToggleComplete = (id) => {
-    dispatchTodo({
+    dispatch({
       type: "TOGGLE_TODO",
       id,
     });
   };
 
   const handleDeleteTodo = (id) => {
-    dispatchTodo({
+    dispatch({
       type: "DELETE_TODO",
       id,
     });

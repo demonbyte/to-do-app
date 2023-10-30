@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function CreateToDo({ user, handleAddTodo }) {
+export default function CreateToDo({ user, handleAddTodo, dispatch }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -15,8 +15,9 @@ export default function CreateToDo({ user, handleAddTodo }) {
   function handleCreate() {
     const newTodo = { title, description, author: user };
     handleAddTodo(newTodo);
-    setTitle("");
-    setDescription("");
+    // setTitle("");
+    //setDescription("");
+    //dispatch({ type: "CREATE_TODO", title, description, author: user });
   }
 
   return (

@@ -1,58 +1,11 @@
-import { useState, useReducer } from "react";
+import { useReducer } from "react";
 import CreateToDo from "./CreateToDo";
-import Login from "./Login";
-import Logout from "./Logout";
-import Register from "./Register";
 import UserBar from "./Userbar";
 import ToDoList from "./ToDoList";
 import { v4 as uuidv4 } from "uuid";
+import appReducer from "./reducers";
 
 function App() {
-  // User Reducer
-  function userReducer(state, action) {
-    switch (action.type) {
-      case "LOGIN":
-      case "REGISTER":
-        return action.username;
-      case "LOGOUT":
-        return "";
-      default:
-        return state;
-    }
-  }
-
-  // Todo Reducer
-  function todoReducer(state, action) {
-    switch (action.type) {
-      case "CREATE_TODO":
-        const newTodo = {
-          id: uuidv4(),
-          title: action.title,
-          description: action.description,
-          author: action.author,
-          dateCreated: Date.now(),
-          complete: false,
-          dateCompleted: null,
-        };
-        return [newTodo, ...state];
-      case "TOGGLE_TODO":
-        return state.map((todo) =>
-          todo.id === action.id
-            ? {
-                ...todo,
-                complete: !todo.complete,
-                dateCompleted: todo.complete ? null : Date.now(),
-              }
-            : todo
-        );
-      case "DELETE_TODO":
-        return state.filter((todo) => todo.id !== action.id);
-      default:
-        return state;
-    }
-  }
-
-  const [user, dispatchUser] = useReducer(userReducer, "");
 
   const initialTodos = [
     {
@@ -82,19 +35,26 @@ function App() {
       complete: false,
       dateCompleted: null,
     },
-    // Add more initial todos as needed
+    
   ];
-  const [todos, dispatchTodo] = useReducer(todoReducer, initialTodos);
+ 
+  const [state, dispatch] = useReducer(appReducer, {
+    user: "",
+    todos: initialTodos,
+  });
+  //const [user, dispatchUser] = useReducer(userReducer, "");
+  //const [todos, dispatchTodo] = useReducer(todoReducer, initialTodos);
+  const {user, todos} = state;
 
   const handleAddTodo = (newTodo) => {
-    dispatchTodo({ type: "CREATE_TODO", ...newTodo });
+    dispatch({ type: "CREATE_TODO", ...newTodo });
   };
 
   return (
     <div>
-      <UserBar user={user} dispatchUser={dispatchUser} />
-      {user && <CreateToDo user={user} handleAddTodo={handleAddTodo} />}
-      <ToDoList todos={todos} dispatchTodo={dispatchTodo} />
+      <UserBar user={user} dispatch={dispatch} />
+      <CreateToDo user={user} handleAddTodo={handleAddTodo} />
+      <ToDoList todos={todos} dispatch={dispatch} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Register({ dispatchUser }) {
+export default function Register({ dispatch }) {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -17,7 +17,7 @@ export default function Register({ dispatchUser }) {
 
   function handleRegister() {
     const { username } = formData;
-    dispatchUser({ type: "REGISTER", username });
+    dispatch({ type: "REGISTER", username });
   }
 
   return (

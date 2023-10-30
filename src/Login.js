@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function Login({ dispatchUser }) {
+export default function Login({ dispatch }) {
   const [formData, setFormData] = useState({ username: "", password: "" });
 
   function handleChange(evt) {
@@ -13,7 +13,7 @@ export default function Login({ dispatchUser }) {
 
   function handleLogin() {
     const { username } = formData;
-    dispatchUser({ type: "LOGIN", username });
+    dispatch({ type: "LOGIN", username });
   }
 
   return (
