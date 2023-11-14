@@ -1,7 +1,11 @@
-// ToDoList.js
-import ToDo from "./ToDo";
 
-export default function ToDoList({ todos = [], dispatch }) {
+import ToDo from "./ToDo";
+import { useStateContext } from "./contexts";
+
+export default function ToDoList() {
+  const { state, dispatch } = useStateContext();
+  const { todos } = state;
+
   const handleToggleComplete = (id) => {
     dispatch({
       type: "TOGGLE_TODO",
@@ -20,10 +24,10 @@ export default function ToDoList({ todos = [], dispatch }) {
     <div>
       {todos.map((todo) => (
         <ToDo
-          {...todo}
           key={todo.id}
           handleToggleComplete={() => handleToggleComplete(todo.id)}
           handleDeleteTodo={() => handleDeleteTodo(todo.id)}
+          {...todo}  // Pass all todo properties as props to ToDo component
         />
       ))}
     </div>

@@ -1,0 +1,93 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "portal",
+      "content": "Some content",
+      "author": "paul"
+    },
+    {
+      "title": "porta1l",
+      "content": "Some content",
+      "author": "paul",
+      "id": 2
+    },
+    {
+      "title": "porta1l",
+      "content": "Some content",
+      "author": "paul",
+      "id": 3
+    }
+  ],
+  "users": [
+    {
+      "email": "test@gmail.com",
+      "password": "$2a$10$KzmfigmYUvWuhLQb3WSIQOYtK4tJKr845fbZXKywSYIa4RLVqSTWy",
+      "id": 1
+    },
+    {
+      "email": "abc@gmail.com",
+      "password": "$2a$10$94kS9J6ReaVoEe2XMwnoPu/uoxAUz82wb92o92uXWgu9Qkfz/s.ci",
+      "id": 2
+    },
+    {
+      "email": "q@gmail.com",
+      "password": "$2a$10$5tl91BTz/pGqKmPimu9CsO4/NlBnwSKbtQhZC0iaJY20/viSTYkFy",
+      "id": 3
+    }
+  ],
+  "themes": [
+    {
+      "id": 1,
+      "primaryColor": "deepskyblue",
+      "secondaryColor": "coral"
+    }
+  ],
+  "todolist": [
+    {
+      "id": 1,
+      "title": "React Hooks",
+      "description": "Complete Chapter One",
+      "author": "Daniel Bugl",
+      "dateCreated": "2023-11-14T23:01:19.141Z",
+      "complete": false,
+      "dateCompleted": "2023-11-14T23:11:33.998Z"
+    },
+    {
+      "id": 2,
+      "title": "Learn JavaScript",
+      "description": "Work on basic JavaScript concepts",
+      "author": "Alice",
+      "dateCreated": "2023-11-14T23:01:19.141Z",
+      "complete": false,
+      "dateCompleted": "2023-11-14T23:11:38.261Z"
+    },
+    {
+      "id": 3,
+      "title": "Build a Project",
+      "description": "Create a small project using React",
+      "author": "Bob",
+      "dateCreated": "2023-11-14T23:01:19.141Z",
+      "complete": false,
+      "dateCompleted": "2023-11-14T22:36:26.714Z"
+    },
+    {
+      "title": "q",
+      "description": "q",
+      "author": "",
+      "dateCreated": "2023-11-14T23:01:19.141Z",
+      "completed": false,
+      "dateCompleted": "2023-11-14T23:04:46.814Z",
+      "id": 4
+    },
+    {
+      "title": "w",
+      "description": "w",
+      "author": "",
+      "dateCreated": "2023-11-14T23:05:10.326Z",
+      "completed": false,
+      "dateCompleted": "2023-11-14T23:12:00.122Z",
+      "id": 5
+    }
+  ]
+}
