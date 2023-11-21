@@ -1,4 +1,3 @@
-// ToDo.js
 import React, { useContext, useEffect, useState } from "react";
 import { StateContext } from "./contexts";
 import { useResource } from "react-request-hook";
@@ -12,6 +11,7 @@ export default function ToDo({
   complete,
   dateCompleted,
   handleDeleteTodo,
+  refreshList,
 }) {
   const { state, dispatch } = useContext(StateContext);
   const [, deleteTodo] = useResource(({ _id }) => ({
@@ -27,12 +27,18 @@ export default function ToDo({
     headers: { Authorization: `${state?.user?.access_token}` },
   }));
 
- 
   const handleToggleComplete = async () => {
     try {
       const currentDate = new Date().toISOString();
       // Toggle the complete property
-      await toggleTodo({ _id, complete: !complete, dateCompleted: !complete ? currentDate : null });
+      await toggleTodo({
+        _id,
+        complete: !complete,
+        dateCompleted: !complete ? currentDate : null,
+      });
+      setTimeout(() => {
+        refreshList();
+      }, [800]);
     } catch (error) {
       console.error("Error toggling todo:", error);
     }
@@ -48,6 +54,9 @@ export default function ToDo({
 
   const handleDeleteTodoLocal = () => {
     deleteTodo({ _id });
+    setTimeout(() => {
+      refreshList();
+    }, [400]);
   };
 
   return (

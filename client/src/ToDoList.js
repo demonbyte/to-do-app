@@ -2,7 +2,7 @@
 import ToDo from "./ToDo";
 import { useStateContext } from "./contexts";
 
-export default function ToDoList() {
+export default function ToDoList({ refreshList }) {
   const { state, dispatch } = useStateContext();
   const { todos } = state;
 
@@ -22,19 +22,13 @@ export default function ToDoList() {
 
   return (
     <div>
-      {/* {todos.map((todo) => (
-        <ToDo
-          key={todo.id}
-          handleToggleComplete={() => handleToggleComplete(todo.id)}
-          handleDeleteTodo={() => handleDeleteTodo(todo.id)}
-          {...todo}  // Pass all todo properties as props to ToDo component
-        />
-      ))} */}
+      {}
 
       {todos.length === 0 && <h2>No posts found.</h2>}
       {todos.length > 0 &&
-        todos.map((p, i) => <ToDo {...p} key={p._id || p.id} />)}
-
+        todos.map((p, i) => (
+          <ToDo {...p} key={p._id || p.id} refreshList={refreshList} />
+        ))}
     </div>
   );
 }

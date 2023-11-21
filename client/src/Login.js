@@ -15,26 +15,6 @@ export default function Login({ dispatch }) {
     data: { username, password },
   }));
 
-  // useEffect(() => {
-  //   if (formSubmitted && user) {
-  //     console.log("API Response:", user); // Log the API response
-
-  //     if (user.status === 400) {
-  //       setLoginFailed(true);
-  //       setErrorMessage(user.error?.data || "An error occurred.");
-  //     } else if (user.data?.user) {
-  //       setLoginFailed(false);
-  //       dispatch({ type: "LOGIN", username: user.data.user.email });
-  //     } else {
-  //       // Handle unexpected response structure
-  //       setLoginFailed(true);
-  //       setErrorMessage(
-  //         user.error?.data || "An unexpected error occurred."
-  //       );
-  //     }
-  //   }
-  // }, [formSubmitted, user, dispatch]);
-
 
   useEffect(() => {
     if (user && user.isLoading === false && (user.data || user.error)) {
@@ -44,15 +24,14 @@ export default function Login({ dispatch }) {
         setLoginFailed(false);
         dispatch({
           type: "LOGIN",
-          username: "User",
+          username: username,
           access_token: user.data.access_token,
         });
+        localStorage.setItem("user", JSON.stringify({ username }));
+        localStorage.setItem("accessToken", user.data.access_token);
       }
     }
   }, [user]);
-
-  
-  
 
   function handleUsername(evt) {
     setUsername(evt.target.value);

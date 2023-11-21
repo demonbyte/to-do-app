@@ -1,4 +1,5 @@
-import { useEffect, useReducer } from "react";
+
+import { useEffect, useReducer, useState } from "react";
 import CreateToDo from "./CreateToDo";
 import { StateContext } from "./contexts";
 import ToDoList from "./ToDoList";
@@ -7,6 +8,7 @@ import appReducer from "./reducers";
 import { useResource } from "react-request-hook";
 
 function App() {
+  const token = localStorage.getItem("accessToken");
   const [state, dispatch] = useReducer(appReducer, {
     user: "",
     todos: [],
@@ -25,14 +27,21 @@ function App() {
   const [todoResponse, getTodos] = useResource(() => ({
     url: "/post",
     method: "get",
-    headers: { Authorization: `${state?.user?.access_token}` },
+    headers: { Authorization: `${token}` },
   }));
 
   useEffect(() => {
-    if (state?.user?.access_token) {
+    if (token) {
       getTodos();
+      dispatch({
+        type: "LOGIN",
+        username:
+          user?.username || JSON.parse(localStorage.getItem("user")).username,
+        access_token: token,
+      });
     }
-  }, [state?.user?.access_token, getTodos]);
+  }, [token, getTodos]);
+
   useEffect(() => {
     if (todoResponse && todoResponse.isLoading === false && todoResponse.data) {
       dispatch({
@@ -45,15 +54,13 @@ function App() {
   return (
     <StateContext.Provider value={{ state, dispatch }}>
       <div>
-        <UserBar />
-        <CreateToDo />
+        <UserBar token={token} />
+        {token ? <CreateToDo refreshList={getTodos} /> : null}
         {/* Display todos if the user is logged in */}
         {user && (
           <div>
-            <h2>{`${user}'s Todos`}</h2>
-            <ToDoList todos={todos} />
-
-            
+            <h2>{`${user?.username}'s Todos`}</h2>
+            <ToDoList todos={todos} refreshList={getTodos} />
           </div>
         )}
       </div>

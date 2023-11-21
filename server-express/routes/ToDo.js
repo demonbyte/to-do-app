@@ -58,45 +58,6 @@ SnuS2vD7pqkGHaAp0bZQ1EDYnJyiDIdBUWQ5QTD24DkIWinMMh4DHbZM9w==
 -----END RSA PRIVATE KEY-----
 `;
 
-// router.use(function (req, res, next) {
-//   console.log("In post router");
-//   if (req.header("Authorization")) {
-//     try {
-//       req.payload = jwt.verify(req.header("Authorization"), privateKey, {
-//         algorithms: ["RS256"],
-//       });
-//       next();
-//     } catch (error) {
-//       return res.status(401).json({ error: error.message });
-//     }
-//   } else {
-//     return res.status(401).json({ error: "Authorization header missing." });
-//   }
-// });
-
-// router.post("/", async function (req, res) {
-//   //console.log("In POST /post handler", JSON.stringify(req));
-//   const post = new Post({
-//     title: req.body.title,
-//     content: req.body.content,
-//     author: req.payload.id,
-//   });
-//   post
-//     .save()
-//     .then((savedPost) => {
-//       return res.status(201).json({
-//         id: savedPost._id,
-//         title: savedPost.title,
-//         content: savedPost.content,
-//         author: savedPost.author,
-//       });
-//     })
-//     .catch((error) => {
-//       return res.status(500).json({ error: error.message });
-//     });
-// });
-
-
 router.use(function (req, res, next) {
   console.log("In post router");
   console.log(req.payload, "=============================", req.header('Authorization'))
@@ -116,44 +77,6 @@ router.use(function (req, res, next) {
     return res.status(401).json({ error: "Authorization header missing." });
   }
 });
-
-
-
-// router.post("/", async function (req, res) {
-//   //console.log("In POST /post handler", JSON.stringify(req));
-//   const post = new Post({
-//     title: req.body.title,
-//     content: req.body.content,
-//     author: req.payload.id,
-//   });
-//   post
-//     .save()
-//     .then((savedPost) => {
-//       return res.status(201).json({
-//         id: savedPost._id,
-//         title: savedPost.title,
-//         content: savedPost.content,
-//         author: savedPost.author,
-//       });
-//     })
-//     .catch((error) => {
-//       return res.status(500).json({ error: error.message });
-//     });
-// });
-
-// router.get("/", async function (req, res) {
-//   //console.log("In GET /post handler");
-//   Post.find()
-//     .where("author")
-//     .equals(req.payload.id)
-//     .then((posts) => {
-//       return res.status(200).json(posts);
-//     })
-//     .catch((error) => {
-//       return res.status(500).json({ error: error.message });
-//     });
-// });
-
 
 
 // POST /post
@@ -207,20 +130,6 @@ router.get("/", async function (req, res) {
 });
 
 
-// router.get("/", async function (req, res) {
-//   console.log("vaddavavavdvadvavadvavavvavavavadvadvavavvavavav")
-//   console.log(posts)
-//   console.log("In GET /post handler");
-//   try {
-//     const posts = await Post.find();
-//     return res.status(200).json(posts);
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// });
-
-// router.put
-
 router.delete("/:id", async function (req, res) {
   console.log("In DELETE /post handler");
 
@@ -261,35 +170,6 @@ router.delete("/:id", async function (req, res) {
   }
 });
 
-
-
-// router.put("/:id", async function (req, res) {
-//   console.log("In PUT /post toggle handler");
-
-//   try {
-//     const updatedPost = await Post.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         $set: {
-//           complete: !req.body.complete, // Toggle the complete property
-//           dateCompleted: req.body.complete ? Date.now() : null, // Update dateCompleted based on complete value
-//         },
-//       },
-//       { new: true } // Returns the updated document
-//     ).where("author").equals(req.payload.id);
-
-//     if (updatedPost) {
-//       console.log("Updated Post:", updatedPost);
-//       return res.status(200).json(updatedPost);
-//     } else {
-//       return res.status(404).json({ error: "Post not found." });
-//     }
-//   } catch (error) {
-//     console.error("Error:", error);
-//     return res.status(500).json({ error: error.message });
-//   }
-// });
-
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
   const todo = await Post.findById(id);
@@ -298,7 +178,7 @@ router.patch('/:id', async (req, res) => {
     { $set: { complete: !todo.complete, dateCompleted: new Date() } },
     { new: true }
   );
-  console.log("heloooooo newtodo",newTodo);
+  
   return res.status(200).json({
     id: newTodo._id,
     dateCompleted: newTodo.dateCompleted
