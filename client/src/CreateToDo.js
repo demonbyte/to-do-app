@@ -1,13 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+
 import { StateContext } from "./contexts";
 import { useResource } from "react-request-hook";
 
 const CreateToDo = () => {
   const { state, dispatch } = useContext(StateContext);
   const { user } = state;
-  const [, createToDo] = useResource(({ title, description, author, dateCreated, completed, dateCompleted }) => ({
-    url: '/todolist',
+  const [todo, createToDo] = useResource(({ title, description, author, dateCreated, completed, dateCompleted }) => ({
+    url: '/post',
     method: 'post',
+    headers: { Authorization: `${state.user.access_token}` },
     data: { title, description, author, dateCreated, completed, dateCompleted }
   }));
 
@@ -18,17 +20,9 @@ const CreateToDo = () => {
   function handleTitle(evt) { setTitle(evt.target.value); }
   function handleDescription(evt) { setDescription(evt.target.value); }
 
+  
   function handleCreate() {
-    const date = new Date();
-    const formattedDate = date.toISOString(); // Format date to ISO format
-    const newTodo = {
-      title,
-      description,
-      author: user,
-      dateCreated: formattedDate,
-      completed: false,
-      dateCompleted: ''
-    };
+    const newTodo = { title, description, author: user.username };
     createToDo(newTodo, ({ data, error }) => {
       if (error) {
         console.error('Error adding post:', error);
@@ -36,11 +30,16 @@ const CreateToDo = () => {
         setSuccessMessage('Post Added Successfully');
         setTimeout(() => setSuccessMessage(null), 3000); // Clear message after 3 seconds
       }
-    });
-    dispatch({ type: 'CREATE_TODO', title, description, author: user });
-  }
+    });}
 
- return (
+    useEffect(() => {
+      if (todo.isLoading =false && todo.data) {
+        dispatch({ type: 'CREATE_TODO', title:todo.data.title , description: todo.data.description, author: user.username });
+      }
+    }, [todo, dispatch]);
+
+
+     return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
@@ -49,7 +48,7 @@ const CreateToDo = () => {
     >
       {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
       <div>
-        Author: <b>{user}</b>
+        Author: <b>{user.username}</b>
       </div>
       <div>
         <label htmlFor="create-title">Title:</label>
@@ -77,4 +76,3 @@ const CreateToDo = () => {
 };
 
 export default CreateToDo;
-

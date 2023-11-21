@@ -22,14 +22,19 @@ export default function ToDoList() {
 
   return (
     <div>
-      {todos.map((todo) => (
+      {/* {todos.map((todo) => (
         <ToDo
           key={todo.id}
           handleToggleComplete={() => handleToggleComplete(todo.id)}
           handleDeleteTodo={() => handleDeleteTodo(todo.id)}
           {...todo}  // Pass all todo properties as props to ToDo component
         />
-      ))}
+      ))} */}
+
+      {todos.length === 0 && <h2>No posts found.</h2>}
+      {todos.length > 0 &&
+        todos.map((p, i) => <ToDo {...p} key={p._id || p.id} />)}
+
     </div>
   );
 }

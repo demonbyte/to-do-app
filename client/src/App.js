@@ -1,5 +1,4 @@
 import { useEffect, useReducer } from "react";
-
 import CreateToDo from "./CreateToDo";
 import { StateContext } from "./contexts";
 import ToDoList from "./ToDoList";
@@ -8,33 +7,55 @@ import appReducer from "./reducers";
 import { useResource } from "react-request-hook";
 
 function App() {
-  // Use the useResource hook to fetch todos
-  const [todoData, getTodos] = useResource(() => ({
-    url: "/todolist",
-    method: "get",
-  }));
-
-  useEffect(getTodos, [getTodos]);
-
   const [state, dispatch] = useReducer(appReducer, {
     user: "",
-    todos: [], // Initialize with an empty array since todos will be fetched dynamically
+    todos: [],
   });
 
+  const { user, todos } = state;
+
   useEffect(() => {
-    // Check if todoData.data exists and is an array
-    if (Array.isArray(todoData.data)) {
-      // Dispatch action to set todos in the state
-      dispatch({ type: "SET_TODOS", todos: todoData.data });
+    if (user) {
+      document.title = `${user.username}'s Todos`;
+    } else {
+      document.title = "Todos";
     }
-  }, [todoData]);
+  }, [user]);
+
+  const [todoResponse, getTodos] = useResource(() => ({
+    url: "/post",
+    method: "get",
+    headers: { Authorization: `${state?.user?.access_token}` },
+  }));
+
+  useEffect(() => {
+    if (state?.user?.access_token) {
+      getTodos();
+    }
+  }, [state?.user?.access_token, getTodos]);
+  useEffect(() => {
+    if (todoResponse && todoResponse.isLoading === false && todoResponse.data) {
+      dispatch({
+        type: "SET_TODOS",
+        todos: todoResponse.data.reverse(),
+      });
+    }
+  }, [todoResponse]);
 
   return (
     <StateContext.Provider value={{ state, dispatch }}>
       <div>
         <UserBar />
         <CreateToDo />
-        <ToDoList />
+        {/* Display todos if the user is logged in */}
+        {user && (
+          <div>
+            <h2>{`${user}'s Todos`}</h2>
+            <ToDoList todos={todos} />
+
+            
+          </div>
+        )}
       </div>
     </StateContext.Provider>
   );

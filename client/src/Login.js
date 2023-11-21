@@ -10,30 +10,49 @@ export default function Login({ dispatch }) {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [user, login] = useResource((username, password) => ({
-    url: "/login",
+    url: "auth/login",
     method: "post",
-    data: { email: username, password },
+    data: { username, password },
   }));
 
-  useEffect(() => {
-    if (formSubmitted && user) {
-      console.log("API Response:", user); // Log the API response
+  // useEffect(() => {
+  //   if (formSubmitted && user) {
+  //     console.log("API Response:", user); // Log the API response
 
-      if (user.status === 400) {
+  //     if (user.status === 400) {
+  //       setLoginFailed(true);
+  //       setErrorMessage(user.error?.data || "An error occurred.");
+  //     } else if (user.data?.user) {
+  //       setLoginFailed(false);
+  //       dispatch({ type: "LOGIN", username: user.data.user.email });
+  //     } else {
+  //       // Handle unexpected response structure
+  //       setLoginFailed(true);
+  //       setErrorMessage(
+  //         user.error?.data || "An unexpected error occurred."
+  //       );
+  //     }
+  //   }
+  // }, [formSubmitted, user, dispatch]);
+
+
+  useEffect(() => {
+    if (user && user.isLoading === false && (user.data || user.error)) {
+      if (user.error) {
         setLoginFailed(true);
-        setErrorMessage(user.error?.data || "An error occurred.");
-      } else if (user.data?.user) {
-        setLoginFailed(false);
-        dispatch({ type: "LOGIN", username: user.data.user.email });
       } else {
-        // Handle unexpected response structure
-        setLoginFailed(true);
-        setErrorMessage(
-          user.error?.data || "An unexpected error occurred."
-        );
+        setLoginFailed(false);
+        dispatch({
+          type: "LOGIN",
+          username: "User",
+          access_token: user.data.access_token,
+        });
       }
     }
-  }, [formSubmitted, user, dispatch]);
+  }, [user]);
+
+  
+  
 
   function handleUsername(evt) {
     setUsername(evt.target.value);
@@ -56,7 +75,7 @@ export default function Login({ dispatch }) {
         type="text"
         name="login-username"
         id="login-username"
-        value={username}
+        value={user.username}
         onChange={handleUsername}
       />
       <label htmlFor="login-password">Password:</label>

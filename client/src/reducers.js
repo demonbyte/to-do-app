@@ -3,9 +3,15 @@ import { v4 as uuidv4 } from "uuid";
 // User Reducer
 function userReducer(state, action) {
   switch (action.type) {
+    // case "LOGIN":
+    // case "REGISTER":
+    //   return action.username;
+
     case "LOGIN":
-    case "REGISTER":
-      return action.username;
+      return {
+        username: action.username,
+        access_token: action.access_token,
+      };
     case "LOGOUT":
       return "";
     default:

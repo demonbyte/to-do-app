@@ -1,39 +1,53 @@
-import React from "react";
+// ToDo.js
+import React, { useContext, useEffect, useState } from "react";
+import { StateContext } from "./contexts";
 import { useResource } from "react-request-hook";
 
 export default function ToDo({
-  id,
+  _id,
   title,
   description,
   author,
   dateCreated,
   complete,
   dateCompleted,
-  handleToggleComplete,
   handleDeleteTodo,
 }) {
-  const [, deleteTodo] = useResource(({ id }) => ({
-    url: `/todolist/${id}`,
+  const { state, dispatch } = useContext(StateContext);
+  const [, deleteTodo] = useResource(({ _id }) => ({
+    url: `/post/${_id}`,
     method: "delete",
+    headers: { Authorization: `${state.user.access_token}` },
   }));
 
-  const [, toggleTodo] = useResource(({ id, dateCompleted }) => ({
-    url: `/todolist/${id}`,
+  const [, toggleTodo] = useResource(({ _id, complete }) => ({
+    url: `/post/${_id}`,
     method: "patch",
-    data: { dateCompleted },
+    data: { complete },
+    headers: { Authorization: `${state?.user?.access_token}` },
   }));
 
-  const handleToggleCompleteLocal = () => {
-    const currentDate = new Date().toISOString();
-    toggleTodo({ id, dateCompleted: currentDate });
-    // if (complete) toggleTodo({ id, dateCompleted: currentDate });
-    // else toggleTodo({ id, dateCompleted: "" });
-    handleToggleComplete();
+ 
+  const handleToggleComplete = async () => {
+    try {
+      const currentDate = new Date().toISOString();
+      // Toggle the complete property
+      await toggleTodo({ _id, complete: !complete, dateCompleted: !complete ? currentDate : null });
+    } catch (error) {
+      console.error("Error toggling todo:", error);
+    }
   };
 
+  useEffect(() => {
+    // Check if the deleteTodo hook has completed and handleDeleteTodo function is provided
+    if (deleteTodo && deleteTodo.isLoading === false && deleteTodo.data) {
+      // Call the handleDeleteTodo function provided by the parent component
+      handleDeleteTodo();
+    }
+  }, [deleteTodo, handleDeleteTodo]);
+
   const handleDeleteTodoLocal = () => {
-    deleteTodo({ id });
-    handleDeleteTodo();
+    deleteTodo({ _id });
   };
 
   return (
@@ -47,11 +61,11 @@ export default function ToDo({
         <input
           type="checkbox"
           checked={complete}
-          onChange={handleToggleCompleteLocal}
+          onChange={handleToggleComplete}
         />
       </div>
       {complete && (
-        <div>Date Completed: {new Date(dateCreated).toLocaleString()}</div>
+        <div>Date Completed: {new Date(dateCompleted).toLocaleString()}</div>
       )}
       <button onClick={handleDeleteTodoLocal}>Delete</button>
       <br />

@@ -1,103 +1,90 @@
-import React, { useEffect, useState } from "react";
-
+import { useState, useEffect } from "react";
 import { useResource } from "react-request-hook";
 
-export default function Register({ dispatch }) {
-  const initialFormData = {
-    email: "",
-    password: "",
-    passwordRepeat: "",
-  };
-
-  const [formData, setFormData] = useState(initialFormData);
-
-  const [register, registerRequest] = useResource(({ email, password }) => ({
-    url: "/register",
+export default function Register({ dispatchUser }) {
+  const [status, setStatus] = useState("");
+  const [user, register] = useResource((username, password) => ({
+    url: "/auth/register",
     method: "post",
-    data: { email, password },
+    data: { username, password, passwordConfirmation: password },
   }));
 
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-
   useEffect(() => {
-    if (register && register.data) {
-      dispatch({ type: "REGISTER", email: register.data.email });
-      setRegistrationSuccess(true);
+    if (user && user.isLoading === false && (user.data || user.error)) {
+      if (user.error) {
+        setStatus("Registration failed, please try again later.");
+      } else {
+        setStatus("Registration successful. You may now login.");
+      }
     }
-  }, [register, dispatch]);
+  }, [user]);
 
-  useEffect(() => {
-    if (registrationSuccess) {
-      const timer = setTimeout(() => {
-        setRegistrationSuccess(false);
-        setFormData(initialFormData); // Clear form values
-      }, 3000);
-  
-      return () => clearTimeout(timer);
-    }
-  }, [registrationSuccess, setFormData]);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordRepeat, setPasswordRepeat] = useState("");
 
-  function handleChange(evt) {
-    const { name, value } = evt.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  function handleUsername(evt) {
+    setUsername(evt.target.value);
   }
 
-  function handleRegister() {
-    const { email, password } = formData;
-    registerRequest({ email, password });
+  function handlePassword(evt) {
+    setPassword(evt.target.value);
   }
+
+  function handlePasswordRepeat(evt) {
+    setPasswordRepeat(evt.target.value);
+  }
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    if (password !== passwordRepeat) {
+      setStatus("Passwords do not match.");
+      return;
+    }
+
+    register(username, password);
+  };
 
   return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleRegister();
-        }}
-      >
-        <label htmlFor="register-email">Email:</label>
-        <input
-          type="text"
-          name="email"
-          id="register-email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <label htmlFor="register-password">Password:</label>
-        <input
-          type="password"
-          name="password"
-          id="register-password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        <label htmlFor="register-password-repeat">Repeat password:</label>
-        <input
-          type="password"
-          name="passwordRepeat"
-          id="register-password-repeat"
-          value={formData.passwordRepeat}
-          onChange={handleChange}
-        />
-        <input
-          type="submit"
-          value="Register"
-          disabled={
-            formData.email.length === 0 ||
-            formData.password.length === 0 ||
-            formData.password !== formData.passwordRepeat
-          }
-        />
-      </form>
+    <form onSubmit={handleRegister}>
+      <label htmlFor="register-username">Username:</label>
+      <input
+        type="text"
+        name="register-username"
+        id="register-username"
+        value={username}
+        onChange={handleUsername}
+      />
 
-      {registrationSuccess && (
-        <div>
-          User created successfully! Redirecting to home page...
-        </div>
-      )}
-    </div>
+      <label htmlFor="register-password">Password:</label>
+      <input
+        type="password"
+        name="register-password"
+        id="register-password"
+        value={password}
+        onChange={handlePassword}
+      />
+
+      <label htmlFor="register-password-repeat">Repeat password:</label>
+      <input
+        type="password"
+        name="register-password-repeat"
+        id="register-password-repeat"
+        value={passwordRepeat}
+        onChange={handlePasswordRepeat}
+      />
+
+      <input
+        type="submit"
+        value="Register"
+        disabled={
+          username.length === 0 ||
+          password.length === 0 ||
+          password !== passwordRepeat
+        }
+      />
+      {status && <p>{status}</p>}
+    </form>
   );
 }
